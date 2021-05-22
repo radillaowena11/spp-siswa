@@ -1,27 +1,61 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import store from "../store/index.js";
+import Navbar from "../views/Layouts/Navbar.vue";
+import Footer from "../views/Layouts/Footer.vue";
+import Sidebar from "../views/Layouts/Sidebar.vue";
+import Login from "../views/Login.vue";
+import Pembayaran from "../views/Pembayaran.vue";
+import Tanggungan from "../views/Tanggungan.vue";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: "/login",
+    name: "login",
+    component: Login,
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
+    path: "/pembayaran",
+    name: "pembayaran",
+    components: {
+      default: Pembayaran,
+      header: Navbar,
+      sidebar: Sidebar,
+      footer: Footer,
+    },
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/tanggungan",
+    name: "tanggungan",
+    components: {
+      default: Tanggungan,
+      header: Navbar,
+      sidebar: Sidebar,
+      footer: Footer,
+    },
+    meta: { requiresAuth: true },
+  },
+];
 
 const router = new VueRouter({
-  routes
-})
+  mode: "history",
+  base: process.env.BASE_URL,
+  routes: routes,
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (store.getters.isLoggedIn) {
+      next();
+      return;
+    }
+    next("/login");
+  } else {
+    next();
+  }
+});
+
+export default router;

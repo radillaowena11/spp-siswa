@@ -1,12 +1,37 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div class="container-scroller">
+      <router-view name="header" />
+      <div class="container-fluid page-body-wrapper">
+        <router-view name="sidebar" />
+        <router-view />
+      </div>
+      <router-view name="footer" />
     </div>
-    <router-view/>
   </div>
 </template>
+
+
+
+<script>
+import Navbar from "./views/Layouts/Navbar";
+import Footer from "./views/Layouts/Footer";
+import Sidebar from "./views/Layouts/Sidebar";
+
+export default {
+  name: "App",
+  components: {
+    Navbar,
+    Footer,
+    Sidebar,
+  },
+  data: function () {
+    return {
+      status_login: "",
+    };
+  },
+};
+</script>
 
 <style>
 #app {
